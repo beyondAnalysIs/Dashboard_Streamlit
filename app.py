@@ -100,3 +100,49 @@ productos_seleccionados = st.sidebar.multiselect(
     options=df['producto'].unique(),
     default=df['producto'].unique()
 )
+
+# slider para regiones
+regiones_seleccionadas = st.sidebar.multiselect(
+    'Selecciona Regiones:',
+    options=df['region'].unique(),
+    default=df['region'].unique()
+)
+
+# filtrar datos basado en selecciones
+df_filtrado = df[
+    (df['producto'].isin(productos_seleccionados)) & 
+    ( df['region'].isin(regiones_seleccionadas))
+]
+
+# Métricas Principales
+col1, col2, col3, col4 = st.columns(4) 
+with col1:
+    st.metric(label='Total de Ventas',
+              value=f'{df_filtrado["venta_total"].sum():,.0f} €'
+             )
+with col2:
+    st.metric(label='Promedio de Ventas',
+              value=f'{df_filtrado["venta_total"].mean():,.0f} €'
+             )
+with col3:
+    st.metric("Número de Ventas",f'{len(df_filtrado)}'
+             )
+with col4:
+    crecimiento = ((df_filtrado[df_filtrado['fecha'] >= '2024-01-01']['venta_total'].sum())/
+                   (df_filtrado[df_filtrado['fecha'] < '2024-01-01']['venta_total'].sum())-1)*100
+    st.metric('Crecimiento de Ventas 2024',
+             f'{crecimiento:.2f}%'
+             )
+# Layout con dos colummnas
+col1,col2 = st.columns(2)
+with col1:
+    st.plotly_chart(fig_mes, use_container_width=True),
+    st.plotly_chart(fig_products, use_container_width=True)
+
+with col2:
+    st.plotly_chart(fig_region, use_container_width=True)
+    st.plotly_chart(fig_heatmap, use_container_width=True)
+
+# Gráfico completo en la parte inferior
+st.plotly_chart(fig_histograma, use_container_width=True)
+
