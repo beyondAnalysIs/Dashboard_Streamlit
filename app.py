@@ -136,7 +136,7 @@ with col4:
 # Layout con dos colummnas
 col1,col2 = st.columns(2)
 with col1:
-    st.plotly_chart(fig_mes, use_container_width=True),
+    st.plotly_chart(fig_mes, use_container_width=True)
     st.plotly_chart(fig_products, use_container_width=True)
 
 with col2:
@@ -145,4 +145,5 @@ with col2:
 
 # Gráfico completo en la parte inferior
 st.plotly_chart(fig_histograma, use_container_width=True)
+
 
