@@ -87,10 +87,14 @@ fig_histograma = px.histogram(df, x='venta_total', nbins=20,
 
 # configuracion del dashboard
 st.set_page_config(page_title='Dashboard de Ventas',
-                   page_icon='📊', layout='wide')
+                   page_icon='logo.ico', layout='wide')
 
 # Título Principal
-st.title('📊 Dashboard de Ventas')
+st.markdown("""
+    <h1 style='display: flex; align-items: center;'>
+        <img src='Logo.png' width='32' style='margin-right:10px;'>Dashboard de Ventas
+    </h1>
+""", unsafe_allow_html=True)
 st.markdown('---')
 
 # Slider para filtros
