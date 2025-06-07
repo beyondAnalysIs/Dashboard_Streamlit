@@ -7,6 +7,9 @@ from plotly.subplots import make_subplots
 import seaborn as sns
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
+from PIL import Image
+import base64
+from io import BytesIO
 
 # Datos 
 np.random.seed(42)
@@ -29,7 +32,8 @@ for fecha in fechas:
         })
         
 df = pd.DataFrame(data)
-df.head(10)
+
+"""df.head(10)
 
 # columna de ventas totales
 df['venta_total'] = df['cantidad'] * df['precio_unitario']
@@ -50,7 +54,7 @@ df_mes = df.groupby(df['fecha'].dt.to_period('M'))['venta_total'].sum().reset_in
 df_mes['fecha'] = df_mes['fecha'].astype(str)
 df_mes.head() 
 
-# gráfico de lineas
+# gr áfico de lineas
 fig_mes = px.line(df_mes, x='fecha', y='venta_total',
                   title='Tendencia de Ventas Mensuales',
                   labels={'venta_total': 'Ventas (€)', 'Fecha': 'mes'})
@@ -84,17 +88,37 @@ fig_heatmap = px.imshow(df_coor, text_auto=True, aspect='auto',
 fig_histograma = px.histogram(df, x='venta_total', nbins=20,
                               title='Distribución de Ventas Totales')
 #fig_histograma.show(renderer='browser')
-
+"""
 # configuracion del dashboard
 st.set_page_config(page_title='Dashboard de Ventas',
                    page_icon='logo.ico', layout='wide')
 
-# Título Principal
-st.markdown("""
-    <h1 style='display: flex; align-items: center;'>
-        <img src='Logo.png' width='32' style='margin-right:10px;'>Dashboard de Ventas
-    </h1>
-""", unsafe_allow_html=True)
+def get_image_base64(image_path):
+    try:
+        with Image.open(image_path) as img:
+            buffered = BytesIO()
+            img.save(buffered, format="PNG")
+            img_base64 = base64.b64encode(buffered.getvalue()).decode()
+            return img_base64
+    except FileNotFoundError:
+        st.error('No se pudo cargar la imagen del logo. ❓')
+        return None
+
+# Obtener la imagen en base64
+img_base64 = get_image_base64("Logo.png")
+
+# Insertar en el título
+if img_base64:
+    st.markdown(
+        f"""
+        <h1 style="display: flex; align-items: center;">
+            <img src="data:image/png;base64,{img_base64}" width="40" style="margin-right: 10px;" />
+            Dashboard de Ventas
+        </h1>
+        """,
+        unsafe_allow_html=True
+    )
+
 st.markdown('---')
 
 # Slider para filtros
@@ -117,6 +141,8 @@ df_filtrado = df[
     (df['producto'].isin(productos_seleccionados)) & 
     ( df['region'].isin(regiones_seleccionadas))
 ]
+
+
 
 # Métricas Principales
 col1, col2, col3, col4 = st.columns(4) 
